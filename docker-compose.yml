@@ -1,0 +1,25 @@
+version: "2"
+services:
+  motioneye:
+    build: ./motioneye
+    ports:
+      # Camera streaming endpoing, add others as needed
+      - "8081-8090:8081-8090"
+      # Web interface
+      - "80:8765"
+    privileged: true
+    volumes:
+      - etc:/etc/motioneye
+      - media:/var/lib/motioneye
+      - run:/var/run/motion
+    labels:
+      io.resin.features.kernel-modules: '1'
+      io.resin.features.firmware: '1'
+
+volumes:
+  # Setting
+  etc:
+  # Saved images and video
+  media:
+  # PIDs
+  run:
