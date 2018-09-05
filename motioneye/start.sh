@@ -22,5 +22,8 @@ if [ -n "${TIMEZONE}" ]; then
     rm /etc/localtime && dpkg-reconfigure -f noninteractive tzdata
 fi
 
+# Start avahi
+/usr/sbin/avahi-daemon -s &
+
 # Start MotionEye server
 /usr/local/bin/meyectl startserver -c /etc/motioneye/motioneye.conf

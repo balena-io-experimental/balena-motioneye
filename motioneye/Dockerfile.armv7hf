@@ -26,7 +26,10 @@ RUN apt-get --quiet update && \
     python-tornado \
     python-wheel \
     v4l-utils \
-    zlib1g-dev && \
+    zlib1g-dev \
+    nano \
+    libnss-mdns \
+    && \
     git clone https://github.com/ccrisan/motioneye.git /tmp/motioneye && \
     (cd /tmp/motioneye; git checkout -b build ${MOTIONEYE_VERSION}) && \
     git clone --depth 1 https://github.com/Hexxeh/rpi-firmware.git /tmp/rpi-firmware && \
@@ -43,7 +46,8 @@ RUN apt-get --quiet update && \
     python-setuptools \
     python-wheel && \
     apt-get --quiet autoremove --yes && \
-    apt-get --quiet --yes clean && rm -rf /var/lib/apt/lists/* && rm -f /var/cache/apt/*.bin
+    apt-get --quiet --yes clean && rm -rf /var/lib/apt/lists/* && rm -f /var/cache/apt/*.bin && \
+    sed -i 's/.*enable-dbus=.*/enable-dbus=no/' /etc/avahi/avahi-daemon.conf
 
 COPY motioneye.conf.sample /usr/share/motioneye/extra/
 COPY start.sh ./
