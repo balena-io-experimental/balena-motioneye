@@ -9,6 +9,8 @@
 
 The interface uses the default MotionEye credentials. There you can add your settings (cameras, etc) that are stored in a non-volatile way (in docker volumes).
 
+To use an attached PiCamera, check our [documetation](https://docs.resin.io/learn/develop/hardware/i2c-and-spi/#raspberry-pi-camera-module) for settings it up, and use `gpu_mem` set at least to `192`.
+
 ### Configuration variables
 
 Some device settings can be adjusted with Device/Fleet service variables. These should be set for the `motioneye` service:
