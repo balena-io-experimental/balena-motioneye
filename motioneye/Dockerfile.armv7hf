@@ -1,34 +1,33 @@
-FROM resin/armv7hf-debian:stretch
+FROM balenalib/armv7hf-debian:stretch
 
 ENV LD_LIBRARY_PATH /opt/vc/lib
 
 # MotionEye version - a branch, tag, or commit SHA
 ENV MOTIONEYE_VERSION=0.39.3
 # Motion version, one of the available Debian packages
-ENV MOTION_VERSION=4.1.1
+ENV MOTION_VERSION=4.2.2
 
 # Build
-RUN apt-get --quiet update && \
-    apt-get --quiet upgrade --yes && \
-    DEBIAN_FRONTEND="noninteractive" apt-get --quiet --yes --option Dpkg::Options::="--force-confnew" --no-install-recommends install \
-    curl \
-    kmod \
-    ffmpeg \
-    git \
-    libmariadbclient18 \
-    libpq5 \
-    lsb-release \
-    python-jinja2 \
-    python-pil \
-    python-pip \
-    python-pycurl \
-    python-setuptools \
-    python-tornado \
-    python-wheel \
-    v4l-utils \
-    zlib1g-dev \
-    nano \
-    libnss-mdns \
+RUN install_packages \
+      curl \
+      kmod \
+      ffmpeg \
+      git \
+      libmicrohttpd12 \
+      libmariadbclient18 \
+      libpq5 \
+      lsb-release \
+      python-jinja2 \
+      python-pil \
+      python-pip \
+      python-pycurl \
+      python-setuptools \
+      python-tornado \
+      python-wheel \
+      v4l-utils \
+      zlib1g-dev \
+      nano \
+      libnss-mdns \
     && \
     git clone https://github.com/ccrisan/motioneye.git /tmp/motioneye && \
     (cd /tmp/motioneye; git checkout -b build ${MOTIONEYE_VERSION}) && \
@@ -41,10 +40,10 @@ RUN apt-get --quiet update && \
     pip install /tmp/motioneye && \
     rm -rf /tmp/motioneye && \
     apt-get purge --yes \
-    git \
-    python-pip \
-    python-setuptools \
-    python-wheel && \
+      git \
+      python-pip \
+      python-setuptools \
+      python-wheel && \
     apt-get --quiet autoremove --yes && \
     apt-get --quiet --yes clean && rm -rf /var/lib/apt/lists/* && rm -f /var/cache/apt/*.bin && \
     sed -i 's/.*enable-dbus=.*/enable-dbus=no/' /etc/avahi/avahi-daemon.conf
