@@ -1,0 +1,54 @@
+FROM balenalib/%%BALENA_MACHINE_NAME%%-debian:buster
+
+ENV LD_LIBRARY_PATH /opt/vc/lib
+
+# MotionEye version - a branch, tag, or commit SHA
+ENV MOTIONEYE_VERSION=0.42.1
+# Motion version, one of the available Debian packages
+#ENV MOTION_VERSION=4.3.2
+
+# Build
+RUN install_packages \
+      curl \
+      kmod \
+      ffmpeg \
+      git \
+      libmicrohttpd12 \
+      libpq5 \
+      lsb-release \
+      python-jinja2 \
+      python-pil \
+      python-pip \
+      python-pycurl \
+      python-setuptools \
+      python-tornado \
+      python-wheel \
+      v4l-utils \
+      zlib1g-dev \
+      nano \
+      libnss-mdns \
+      motion \
+    && \
+    git clone https://github.com/ccrisan/motioneye.git /tmp/motioneye && \
+    (cd /tmp/motioneye; git checkout -b build ${MOTIONEYE_VERSION}) && \
+    git clone --depth 1 https://github.com/Hexxeh/rpi-firmware.git /tmp/rpi-firmware && \
+    cp -rv /tmp/rpi-firmware/vc/hardfp/opt/vc /opt && \
+    rm -rf /tmp/rpi-firmware && \
+    pip install /tmp/motioneye && \
+    rm -rf /tmp/motioneye
+
+RUN pip install onvif
+
+RUN apt-get purge --yes \
+    git \
+    python-pip \
+    python-setuptools \
+    python-wheel && \
+    apt-get --quiet autoremove --yes && \
+    apt-get --quiet --yes clean && rm -rf /var/lib/apt/lists/* && rm -f /var/cache/apt/*.bin && \
+    sed -i 's/.*enable-dbus=.*/enable-dbus=no/' /etc/avahi/avahi-daemon.conf
+
+COPY motioneye.conf.sample /usr/share/motioneye/extra/
+COPY start.sh ./
+
+CMD ["bash", "start.sh"]
